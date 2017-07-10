@@ -1,0 +1,49 @@
+.messageView
+{
+  position:absolute;
+  cursor:pointer
+}
+
+.messageView .mv-contents
+{
+  padding:5pc 0 0
+}
+
+.messageView .mv-contents .mv-comment
+{
+  position:absolute;
+  font-size:28px;
+
+  width: 774px;
+  height: 138px;
+  top: 444px;
+  left: 0px;
+  padding:18px;
+
+  color: #f8f8f8;
+  text-shadow: black 1px 1px 0px, black -1px 1px 0px,
+               black 1px -1px 0px, black -1px -1px 0px;
+  font-family: GameFont;
+
+  border:solid 3px #f8f8f8;
+  border-radius:5px;
+  background: rgba(0,0,0, 0.5); 
+
+  z-index:30
+}
+
+.messageView .mv-contents .mv-comment .pointer
+{
+  position:absolute;
+  right:120px;
+  bottom:0;
+  width:20px;
+  height:34px;
+  background:url(../img//icon_pointer.png) no-repeat;-moz-background-size:20px auto;-o-background-size:20px auto;-webkit-background-size:20px auto;background-size:20px auto;-moz-animation:pointer-anime 1s ease-in-out infinite;-webkit-animation:pointer-anime 1s ease-in-out infinite;animation:pointer-anime 1s ease-in-out infinite
+}
+
+#animation_container
+{
+  position:absolute;
+  z-index:30;
+}
