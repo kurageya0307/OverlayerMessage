@@ -13,7 +13,7 @@ RPGツクールMVプロジェクトのjs/pluginsのフォルダに以下のフ�
 
 ・style.css (https://github.com/webcyou/MessageViewJS/blob/master/demo/css/style.css)
 
-・rpg_maker_mv.css (https://github.com/)
+・rpg_maker_mv.css (https://github.com/kurageya0307/OverlayerMessage/blob/master/rpg_maker_mv.css)
 
 ## プラグインコマンド
 ・showMessageView
