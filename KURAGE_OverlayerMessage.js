@@ -12,16 +12,21 @@
  *　  RPGツクールMVプロジェクトのjs/pluginsのフォルダに以下のファイルを用意してください。
  *　　・message_view.min.js (https://github.com/webcyou/MessageViewJS/blob/master/dist/message_view.min.js)
  *　　・style.css (https://github.com/webcyou/MessageViewJS/blob/master/demo/css/style.css)
- *　　・rpg_maker_mv.css (https://github.com/)
+ *　　・rpg_maker_mv.css (https://github.com/kurageya0307/OverlayerMessage/blob/master/rpg_maker_mv.css)
+ *　使い方
+ *　　①以下のプラグインコマンドのスタートを実行する。
+ *　　②ツクールMVのイベントコマンドの「文章の表示」でメッセージを表示する。
+ *　　③以下のプラグインコマンドのエンドを実行する。
+ *    プラグインコマンドのスタートからエンドまでの間の文章の表示がツクールMVとは別のCANVASに表示されるはずです。
+ *　注意
+ *  　startOverlayerMessage以降の文章では改行がそのままでは入力できません。
+ *    改行の代わりに<br>を入力すると該当箇所に改行が挿入されます。
  *　プラグインコマンド
- *　　・showMessageView
- *　　　メッセージウィンドウを表示します。
+ *　　・startOverlayerMessage
+ *　　　このプラグインコマンド実行後，「文章の表示」が上のレイヤーのメッセージ表示になります。
  *
- *　　・hideMessageView
- *　　　メッセージウィンドウを隠します。
- *
- *　　・nextMessage
- *　　　メッセージを進めます。
+ *　　・endOverlayerMessage
+ *　　　上のレイヤーのメッセージ表示を終了します。
  *
  * @license
  * Copyright (c) 2017 Y.K
@@ -92,7 +97,50 @@
     document.body.appendChild(main);
   }
 
+  var message_view_mode = false;
+  Window_Message.prototype.startMessage = function() {
+    if(message_view_mode)
+    {
+      this._textState = {};
+      this._textState.index = 0;
+      this._textState.text = this.convertEscapeCharacters($gameMessage.allText());
+      message = new MessageViewer({
+          "data": [ { "message":this._textState.text }, ],
+        "option": { "loop": false, "speed": "fast"}
+      });
+      main.style.visibility = "visible";
+      this.newPage(this._textState);
+      this.updatePlacement();
+      this.updateBackground();
+      this.open();
+    }
+    else
+    {
+      this._textState = {};
+      this._textState.index = 0;
+      this._textState.text = this.convertEscapeCharacters($gameMessage.allText());
+      this.newPage(this._textState);
+      this.updatePlacement();
+      this.updateBackground();
+      this.open();
+    }
+  };
 
+  Window_Message.prototype.updatePlacement = function() {
+    // FIXME 割りと無理やりです。
+    if(message_view_mode)
+    {
+      this.y = -1000;
+    }
+    else
+    {
+      this._positionType = $gameMessage.positionType();
+      this.y = this._positionType * (Graphics.boxHeight - this.height) / 2;
+      this._goldWindow.y = this.y > 0 ? 0 : Graphics.boxHeight - this._goldWindow.height;
+    }
+  };
+
+//-----------------------------------------------------------------------------
   var _Scene_Boot_start = Scene_Boot.prototype.start;
 
   var message;
@@ -100,54 +148,18 @@
     _Scene_Boot_start.apply(this, arguments);
     appendMessageView();
 
-// FIXME
-// 外部のJSONファイルを読み込むように作り直すべきですね。。。
-    message = new MessageViewer({
-        "data": [
-        {
-            "message":"",
-        },
-        {
-            "message":"そこでMessageView.js（http://www.webcyou.com/）を<br>利用してアニメーションの表示領域のさらに上にメッセージを<br>表示させたよ。",
-        },
-        {
-            "message":"メッセージ枠はCSSでそれっぽく設定しているよ。",
-        },
-        ],
-        "option": {
-            "loop": true,
-           "speed": "fast"
-        }
-    });
-
   }
-
-  function showMessageView()
-  {
-    main.style.visibility = "visible";
-  }
-  function hideMessageView()
-  {
-    main.style.visibility = "hidden";
-  }
-  function nextMessage()
-  {
-    message.next();
-  }
-
-
 
   var _Game_Interpreter_pluginCommand      = Game_Interpreter.prototype.pluginCommand;
   Game_Interpreter.prototype.pluginCommand = function (command, args) {
     _Game_Interpreter_pluginCommand.call(this, command, args);
-    if (command === 'showMessageView') {
-      showMessageView();
+    if (command === 'startOverlayerMessage') {
+      main.style.visibility = "visible";
+      message_view_mode = true;
     }
-    if (command === 'hideMessageView') {
-      hideMessageView();
-    }
-    if (command === 'nextMessage') {
-      nextMessage();
+    if (command === 'endOverlayerMessage') {
+      message_view_mode = false;
+      main.style.visibility = "hidden";
     }
   };
 
